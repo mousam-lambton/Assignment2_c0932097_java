@@ -22,12 +22,7 @@ public class Person {
     private final String gender;
 
     // Private constructor for builder pattern, with Jackson annotations for deserialization
-    private Person(
-            @JsonProperty("id") String id,
-            @JsonProperty("firstName") String firstName,
-            @JsonProperty("lastName") String lastName,
-            @JsonProperty("age") Integer age,
-            @JsonProperty("gender") String gender) {
+    private Person(@JsonProperty("id") String id, @JsonProperty("firstName") String firstName, @JsonProperty("lastName") String lastName, @JsonProperty("age") Integer age, @JsonProperty("gender") String gender) {
         validateInput(id, firstName, lastName, age);
         this.id = id;
         this.firstName = firstName;
@@ -36,8 +31,8 @@ public class Person {
         this.gender = gender;
     }
 
-    // Input validation method to ensure data integrity
-    private void validateInput(String id, String firstName, String lastName, Integer age) {
+    // Input validation for fields, this is static so it can be called from the Builder as well
+    private static void validateInput(String id, String firstName, String lastName, Integer age) {
         if (id == null) {
             throw new IllegalArgumentException("ID cannot be null");
         }
@@ -49,6 +44,14 @@ public class Person {
         }
         if (age != null && age < 0) {
             throw new IllegalArgumentException("Age cannot be negative");
+        }
+    }
+
+    // Builder class using validation from Person
+    public static class Builder {
+        public Person build() {
+            validateInput(id, firstName, lastName, age);
+            return new Person(id, firstName, lastName, age, gender);
         }
     }
 }
